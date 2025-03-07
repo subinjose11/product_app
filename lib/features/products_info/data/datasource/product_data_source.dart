@@ -58,27 +58,6 @@ class ProductDataSource {
 //     );
 //   }
 // }
-
-  /// Example of how to use the API client in a service locator or dependency injection
-  ///
-  /// In your main.dart or dependency injection setup:
-  /// ```
-  /// final apiClient = ApiClient(baseUrl: 'https://api.example.com/v1');
-  /// final userRepository = UserRepository(apiClient: apiClient);
-  /// ```
-  ///
-  /// In your business logic or UI layer:
-  /// ```
-  /// Future<void> loadUsers() async {
-  ///   final response = await userRepository.getUsers();
-  ///
-  ///   if (response.isSuccess) {
-  ///     final users = response.data!;
-  ///     // Update UI with users
-  ///   } else {
-  ///     // Show error message
-  ///     print(response.error);
-  ///   }
 }
 
 final productDataSourceProvider = Provider<ProductDataSource>(

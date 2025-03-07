@@ -13,10 +13,8 @@ class ProductUsecase implements ProductRepository {
     try {
       final result = await _productRepository.getProductCategories();
       if (result is Success<List<ProductCategoriesEntity>, Failure>) {
-        print("1");
         return Success(result.success);
       } else {
-        print("2");
         return Error(
           Failure(
             message: result.toString(),
