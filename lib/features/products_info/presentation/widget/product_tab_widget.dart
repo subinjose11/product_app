@@ -21,7 +21,7 @@ class ProductTabWidget extends ConsumerWidget {
       length: categories.length,
       child: TabBar(
         onTap: (index) {
-          onProductTabClicked(categories[index].name);
+          onProductTabClicked(categories[index].slug);
         },
         isScrollable: true,
         tabs: categories.map((category) {

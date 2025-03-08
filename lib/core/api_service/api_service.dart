@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:product_app/core/model/api_response_model.dart';
 
@@ -115,20 +114,39 @@ class ApiClient {
   ) {
     if (response.statusCode == 200) {
       try {
+        if (response.body.isEmpty) {
+          return ApiResponse.error('Empty response from server');
+        }
+
         final jsonData = jsonDecode(response.body);
+
+        if (jsonData == null) {
+          return ApiResponse.error('Received null data from server');
+        }
+
         final data = fromJson(jsonData);
         return ApiResponse.success(data);
-      } catch (e) {
+      } catch (e, stackTrace) {
+        print(
+            'Parse error: $e\nStack trace: $stackTrace'); // Detailed error logging
         return ApiResponse.error('Parse error: ${e.toString()}');
       }
     } else {
       String errorMessage;
       try {
-        final errorJson = jsonDecode(response.body);
-        errorMessage = errorJson['message'] ?? 'Server error';
+        if (response.body.isNotEmpty) {
+          final errorJson = jsonDecode(response.body);
+          errorMessage = errorJson is Map<String, dynamic> &&
+                  errorJson.containsKey('message')
+              ? errorJson['message']
+              : 'Unknown server error';
+        } else {
+          errorMessage = 'Server returned an empty error response';
+        }
       } catch (_) {
         errorMessage = 'Server error: ${response.statusCode}';
       }
+
       return ApiResponse.error(errorMessage);
     }
   }

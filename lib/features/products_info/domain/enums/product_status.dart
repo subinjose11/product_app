@@ -1,6 +1,13 @@
-enum ProductStatus {
+enum ProductCategoryStatus {
   idle,
   loading,
-  productFetched,
+  productCategoryFetched,
   failed,
+}
+
+enum ProductStatus {
+  idle,
+  productLoading,
+  productFetched,
+  productFetchingFailed
 }

@@ -5,11 +5,14 @@ import 'package:product_app/features/products_info/data/repository_imp/product_r
 import 'package:product_app/features/products_info/domain/entity/product_entity.dart';
 import 'package:product_app/features/products_info/domain/repository/product_repo.dart';
 
+import '../../data/models/product_model.dart';
+
 class ProductUsecase implements ProductRepository {
   final ProductRepository _productRepository;
   ProductUsecase(this._productRepository);
   @override
-  Future<Result<List<ProductCategoriesEntity>, Failure>> getProductCategories() async {
+  Future<Result<List<ProductCategoriesEntity>, Failure>>
+      getProductCategories() async {
     try {
       final result = await _productRepository.getProductCategories();
       if (result is Success<List<ProductCategoriesEntity>, Failure>) {
@@ -28,7 +31,28 @@ class ProductUsecase implements ProductRepository {
     }
   }
 
-
+  @override
+  Future<Result<ProductModel, Failure>> getProduct(
+      {required String productCategory}) async {
+    try {
+      final result = await _productRepository.getProduct(productCategory: productCategory);
+      if (result is Success<ProductModel, Failure>) {
+        return Success(result.success);
+      } else {
+        return Error(
+          Failure(
+            message: result.toString(),
+          ),
+        );
+      }
+    } on Failure catch (e) {
+      print(e.toString());
+      return Error(e);
+    } catch (e) {
+      print(e.toString());
+      return Error(Failure(exception: Exception(e), message: e.toString()));
+    }
+  }
 }
 
 final productUsecaseProvider = Provider<ProductUsecase>((ref) {

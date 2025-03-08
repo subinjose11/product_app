@@ -16,9 +16,14 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ProductState {
+  ProductCategoryStatus get productCategoryStatus =>
+      throw _privateConstructorUsedError;
   ProductStatus get productStatus => throw _privateConstructorUsedError;
   String get errorMessage => throw _privateConstructorUsedError;
   List<ProductCategoriesEntity> get productCategories =>
+      throw _privateConstructorUsedError;
+  String get selectedCategory => throw _privateConstructorUsedError;
+  Map<String, List<Product>> get categoryProductMap =>
       throw _privateConstructorUsedError;
 
   /// Create a copy of ProductState
@@ -35,9 +40,12 @@ abstract class $ProductStateCopyWith<$Res> {
       _$ProductStateCopyWithImpl<$Res, ProductState>;
   @useResult
   $Res call(
-      {ProductStatus productStatus,
+      {ProductCategoryStatus productCategoryStatus,
+      ProductStatus productStatus,
       String errorMessage,
-      List<ProductCategoriesEntity> productCategories});
+      List<ProductCategoriesEntity> productCategories,
+      String selectedCategory,
+      Map<String, List<Product>> categoryProductMap});
 }
 
 /// @nodoc
@@ -55,11 +63,18 @@ class _$ProductStateCopyWithImpl<$Res, $Val extends ProductState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? productCategoryStatus = null,
     Object? productStatus = null,
     Object? errorMessage = null,
     Object? productCategories = null,
+    Object? selectedCategory = null,
+    Object? categoryProductMap = null,
   }) {
     return _then(_value.copyWith(
+      productCategoryStatus: null == productCategoryStatus
+          ? _value.productCategoryStatus
+          : productCategoryStatus // ignore: cast_nullable_to_non_nullable
+              as ProductCategoryStatus,
       productStatus: null == productStatus
           ? _value.productStatus
           : productStatus // ignore: cast_nullable_to_non_nullable
@@ -72,6 +87,14 @@ class _$ProductStateCopyWithImpl<$Res, $Val extends ProductState>
           ? _value.productCategories
           : productCategories // ignore: cast_nullable_to_non_nullable
               as List<ProductCategoriesEntity>,
+      selectedCategory: null == selectedCategory
+          ? _value.selectedCategory
+          : selectedCategory // ignore: cast_nullable_to_non_nullable
+              as String,
+      categoryProductMap: null == categoryProductMap
+          ? _value.categoryProductMap
+          : categoryProductMap // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<Product>>,
     ) as $Val);
   }
 }
@@ -85,9 +108,12 @@ abstract class _$$ProductStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ProductStatus productStatus,
+      {ProductCategoryStatus productCategoryStatus,
+      ProductStatus productStatus,
       String errorMessage,
-      List<ProductCategoriesEntity> productCategories});
+      List<ProductCategoriesEntity> productCategories,
+      String selectedCategory,
+      Map<String, List<Product>> categoryProductMap});
 }
 
 /// @nodoc
@@ -103,11 +129,18 @@ class __$$ProductStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? productCategoryStatus = null,
     Object? productStatus = null,
     Object? errorMessage = null,
     Object? productCategories = null,
+    Object? selectedCategory = null,
+    Object? categoryProductMap = null,
   }) {
     return _then(_$ProductStateImpl(
+      productCategoryStatus: null == productCategoryStatus
+          ? _value.productCategoryStatus
+          : productCategoryStatus // ignore: cast_nullable_to_non_nullable
+              as ProductCategoryStatus,
       productStatus: null == productStatus
           ? _value.productStatus
           : productStatus // ignore: cast_nullable_to_non_nullable
@@ -120,6 +153,14 @@ class __$$ProductStateImplCopyWithImpl<$Res>
           ? _value._productCategories
           : productCategories // ignore: cast_nullable_to_non_nullable
               as List<ProductCategoriesEntity>,
+      selectedCategory: null == selectedCategory
+          ? _value.selectedCategory
+          : selectedCategory // ignore: cast_nullable_to_non_nullable
+              as String,
+      categoryProductMap: null == categoryProductMap
+          ? _value._categoryProductMap
+          : categoryProductMap // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<Product>>,
     ));
   }
 }
@@ -128,11 +169,18 @@ class __$$ProductStateImplCopyWithImpl<$Res>
 
 class _$ProductStateImpl implements _ProductState {
   const _$ProductStateImpl(
-      {this.productStatus = ProductStatus.idle,
+      {this.productCategoryStatus = ProductCategoryStatus.idle,
+      this.productStatus = ProductStatus.idle,
       this.errorMessage = '',
-      final List<ProductCategoriesEntity> productCategories = const []})
-      : _productCategories = productCategories;
+      final List<ProductCategoriesEntity> productCategories = const [],
+      this.selectedCategory = '',
+      final Map<String, List<Product>> categoryProductMap = const {}})
+      : _productCategories = productCategories,
+        _categoryProductMap = categoryProductMap;
 
+  @override
+  @JsonKey()
+  final ProductCategoryStatus productCategoryStatus;
   @override
   @JsonKey()
   final ProductStatus productStatus;
@@ -150,8 +198,21 @@ class _$ProductStateImpl implements _ProductState {
   }
 
   @override
+  @JsonKey()
+  final String selectedCategory;
+  final Map<String, List<Product>> _categoryProductMap;
+  @override
+  @JsonKey()
+  Map<String, List<Product>> get categoryProductMap {
+    if (_categoryProductMap is EqualUnmodifiableMapView)
+      return _categoryProductMap;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_categoryProductMap);
+  }
+
+  @override
   String toString() {
-    return 'ProductState(productStatus: $productStatus, errorMessage: $errorMessage, productCategories: $productCategories)';
+    return 'ProductState(productCategoryStatus: $productCategoryStatus, productStatus: $productStatus, errorMessage: $errorMessage, productCategories: $productCategories, selectedCategory: $selectedCategory, categoryProductMap: $categoryProductMap)';
   }
 
   @override
@@ -159,17 +220,29 @@ class _$ProductStateImpl implements _ProductState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ProductStateImpl &&
+            (identical(other.productCategoryStatus, productCategoryStatus) ||
+                other.productCategoryStatus == productCategoryStatus) &&
             (identical(other.productStatus, productStatus) ||
                 other.productStatus == productStatus) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             const DeepCollectionEquality()
-                .equals(other._productCategories, _productCategories));
+                .equals(other._productCategories, _productCategories) &&
+            (identical(other.selectedCategory, selectedCategory) ||
+                other.selectedCategory == selectedCategory) &&
+            const DeepCollectionEquality()
+                .equals(other._categoryProductMap, _categoryProductMap));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, productStatus, errorMessage,
-      const DeepCollectionEquality().hash(_productCategories));
+  int get hashCode => Object.hash(
+      runtimeType,
+      productCategoryStatus,
+      productStatus,
+      errorMessage,
+      const DeepCollectionEquality().hash(_productCategories),
+      selectedCategory,
+      const DeepCollectionEquality().hash(_categoryProductMap));
 
   /// Create a copy of ProductState
   /// with the given fields replaced by the non-null parameter values.
@@ -182,17 +255,26 @@ class _$ProductStateImpl implements _ProductState {
 
 abstract class _ProductState implements ProductState {
   const factory _ProductState(
-          {final ProductStatus productStatus,
+          {final ProductCategoryStatus productCategoryStatus,
+          final ProductStatus productStatus,
           final String errorMessage,
-          final List<ProductCategoriesEntity> productCategories}) =
+          final List<ProductCategoriesEntity> productCategories,
+          final String selectedCategory,
+          final Map<String, List<Product>> categoryProductMap}) =
       _$ProductStateImpl;
 
+  @override
+  ProductCategoryStatus get productCategoryStatus;
   @override
   ProductStatus get productStatus;
   @override
   String get errorMessage;
   @override
   List<ProductCategoriesEntity> get productCategories;
+  @override
+  String get selectedCategory;
+  @override
+  Map<String, List<Product>> get categoryProductMap;
 
   /// Create a copy of ProductState
   /// with the given fields replaced by the non-null parameter values.
