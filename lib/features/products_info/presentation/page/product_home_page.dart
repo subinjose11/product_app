@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:product_app/features/products_info/domain/enums/product_status.dart';
 import 'package:product_app/features/products_info/presentation/controller/product_controller.dart';
+import 'package:product_app/features/products_info/presentation/widget/product_tab_widget.dart';
 
 class ProductHomePage extends ConsumerStatefulWidget {
   const ProductHomePage({super.key});
@@ -21,7 +22,7 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final product = ref.watch(productProvider).productCategories;
+
     final productStatus =
         ref.watch(productProvider.select((value) => value.productStatus));
     return SafeArea(
@@ -33,22 +34,9 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
             if (productStatus == ProductStatus.failed)
               const Text("Couldnt fetch the product"),
             if (productStatus == ProductStatus.productFetched)
-              product.isNotEmpty
-                  ? Expanded(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: product.length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Text(product[index].name),
-                              Text(product[index].url),
-                            ],
-                          );
-                        },
-                      ),
-                  )
-                  : SizedBox(),
+                ProductTabWidget(onProductTabClicked:(product){
+                  print(product);
+                }),
           ],
         ),
       ),
