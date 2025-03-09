@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:product_app/features/products_info/domain/enums/product_status.dart';
 import 'package:product_app/features/products_info/presentation/controller/product_controller.dart';
 import 'package:product_app/features/products_info/presentation/widget/product_tab_widget.dart';
+import 'package:product_app/features/products_info/presentation/widget/products_grid_card.dart';
 
 class ProductHomePage extends ConsumerStatefulWidget {
   const ProductHomePage({super.key});
@@ -15,53 +16,58 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(productProvider.notifier).getProductCategories();
-    });
+    Future.microtask(
+        () => ref.read(productProvider.notifier).getProductCategories());
   }
 
   @override
   Widget build(BuildContext context) {
-    final productStatus =
-        ref.watch(productProvider.select((value) => value.productStatus));
-    final productCategoryStatus = ref
-        .watch(productProvider.select((value) => value.productCategoryStatus));
-    final products = ref.watch(productProvider).categoryProductMap;
-    final selectedCategory = ref.watch(productProvider).selectedCategory;
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
+    final productState = ref.watch(productProvider);
+    final productStatus = productState.productStatus;
+    final productCategoryStatus = productState.productCategoryStatus;
+    final selectedCategory = productState.selectedCategory;
+    final products = productState.categoryProductMap[selectedCategory] ?? [];
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
           children: [
             if (productCategoryStatus == ProductCategoryStatus.loading)
-              const Center(child: CircularProgressIndicator()),
+              const Expanded(child: Center(child: CircularProgressIndicator())),
             if (productCategoryStatus == ProductCategoryStatus.failed)
-              const Text("Couldnt fetch the product"),
+              const Expanded(
+                  child: Center(
+                      child: Text("Something went wrong. Please try again."))),
             if (productCategoryStatus ==
                 ProductCategoryStatus.productCategoryFetched)
-              ProductTabWidget(onProductTabClicked: (productCategory) {
-                ref
+              ProductTabWidget(
+                onProductTabClicked: (category) => ref
                     .read(productProvider.notifier)
-                    .onProductCategoryTabClicked(productCategory);
-              }),
-            Expanded(
-                child: Column(
-              children: [
-                if (productStatus == ProductStatus.productLoading)
-                  const Expanded(
-                      child: Center(child: CircularProgressIndicator())),
-                if (productStatus == ProductStatus.productFetchingFailed)
-                  const Expanded(
-                      child: Center(child: Text("Couldn't fetch the product"))),
-                if (productStatus == ProductStatus.productFetched)
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: products[selectedCategory]!.length,
-                    itemBuilder: (context, index) {
-                      return Text(products[selectedCategory]?[index].title?.toString() ?? 'No title');
+                    .onProductCategoryTabClicked(category),
+              ),
+            if (productCategoryStatus != ProductCategoryStatus.loading)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0, vertical: 16),
+                  child: Builder(
+                    builder: (context) {
+                      if (productStatus == ProductStatus.productLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (productStatus ==
+                          ProductStatus.productFetchingFailed) {
+                        return const Center(
+                            child: Text("Couldn't fetch the product"));
+                      } else if (productStatus ==
+                              ProductStatus.productFetched &&
+                          products.isNotEmpty) {
+                        return ProductsGridCard(products: products);
+                      }
+                      return const SizedBox.shrink();
                     },
-                  ))
-              ],
-            ))
+                  ),
+                ),
+              ),
           ],
         ),
       ),
