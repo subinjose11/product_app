@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:product_app/core/provider/common_provider.dart';
 import 'package:product_app/features/products_info/domain/enums/product_status.dart';
 import 'package:product_app/features/products_info/presentation/controller/product_controller.dart';
 import 'package:product_app/features/products_info/presentation/widget/product_tab_widget.dart';
@@ -13,11 +15,19 @@ class ProductHomePage extends ConsumerStatefulWidget {
 }
 
 class _ProductHomePageState extends ConsumerState<ProductHomePage> {
+  late TextEditingController _searchController;
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     Future.microtask(
         () => ref.read(productProvider.notifier).getProductCategories());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -27,6 +37,13 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
     final productCategoryStatus = productState.productCategoryStatus;
     final selectedCategory = productState.selectedCategory;
     final products = productState.categoryProductMap[selectedCategory] ?? [];
+    final searchTextValue = ref.watch(searchTextValueProvider);
+    final filteredProduct = products
+        .where((item) => item.title
+            .toString()
+            .toLowerCase()
+            .contains(searchTextValue.toLowerCase()))
+        .toList();
 
     return Scaffold(
       body: SafeArea(
@@ -40,11 +57,13 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
                       child: Text("Something went wrong. Please try again."))),
             if (productCategoryStatus ==
                 ProductCategoryStatus.productCategoryFetched)
-              ProductTabWidget(
-                onProductTabClicked: (category) => ref
+              ProductTabWidget(onProductTabClicked: (category) {
+                ref.invalidate(searchTextValueProvider);
+                _searchController.text = '';
+                ref
                     .read(productProvider.notifier)
-                    .onProductCategoryTabClicked(category),
-              ),
+                    .onProductCategoryTabClicked(category);
+              }),
             if (productCategoryStatus != ProductCategoryStatus.loading)
               Expanded(
                 child: Padding(
@@ -59,9 +78,30 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
                         return const Center(
                             child: Text("Couldn't fetch the product"));
                       } else if (productStatus ==
-                              ProductStatus.productFetched &&
-                          products.isNotEmpty) {
-                        return ProductsGridCard(products: products);
+                          ProductStatus.productFetched) {
+                        return Column(
+                          children: [
+                            CupertinoSearchTextField(
+                              placeholder: 'Search in "$selectedCategory"',
+                              controller: _searchController,
+
+                              onChanged: (String value) {
+                                ref
+                                    .read(searchTextValueProvider.notifier)
+                                    .state = value;
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            filteredProduct.isNotEmpty
+                                ? Expanded(
+                                    child: ProductsGridCard(
+                                        products: filteredProduct))
+                                : Text(
+                                    'No results found for "${_searchController.text}"',
+                                    textAlign: TextAlign.center,
+                                  ),
+                          ],
+                        );
                       }
                       return const SizedBox.shrink();
                     },

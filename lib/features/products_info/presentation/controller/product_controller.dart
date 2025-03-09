@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:product_app/features/products_info/data/models/product_model.dart';
 import 'package:product_app/features/products_info/domain/enums/product_status.dart';
 import 'package:product_app/features/products_info/domain/usecase/product_usecase.dart';
 import 'package:product_app/features/products_info/presentation/state/product_state.dart';

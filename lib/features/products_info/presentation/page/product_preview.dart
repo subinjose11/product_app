@@ -31,6 +31,7 @@ class ProductPreview extends StatelessWidget {
                 ],
               ),
               ProductImagePreview(images: product.images!),
+              const SizedBox(height: 8),
               ProductPriceDetails(
                 price: product.price!,
                 discountPercentage: product.discountPercentage!,
