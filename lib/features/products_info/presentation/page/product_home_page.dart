@@ -20,8 +20,6 @@ class _ProductHomePageState extends ConsumerState<ProductHomePage> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    Future.microtask(
-        () => ref.read(productProvider.notifier).getProductCategories());
   }
 
   @override
